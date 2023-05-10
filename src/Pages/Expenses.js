@@ -16,8 +16,8 @@ function Expenses() {
   }
 
   const navigate = useNavigate();
-  const url = "https://ec7a-125-17-251-66.ngrok-free.app/expense_by_id"
-  const baseUrl = "https://ec7a-125-17-251-66.ngrok-free.app/total_expense";
+  const url = "https://5914-125-17-251-66.ngrok-free.app/expense_by_id  "
+  const baseUrl = "https://5914-125-17-251-66.ngrok-free.app/total_expense";
   const [users, setUsers] = useState([]);
   const [data, setData] = useState({
     start_date: "",

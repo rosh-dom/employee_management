@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { message } from 'antd';
 import { Link } from "react-router-dom";
-const baseUrl = "https://5fc2-125-17-251-66.ngrok-free.app/total_leaves";
+const baseUrl = "https://5914-125-17-251-66.ngrok-free.app/total_leaves";
 
 function Leaves() {
   function handleClick() {
@@ -16,7 +16,7 @@ function Leaves() {
   }
 
   const navigate = useNavigate();
-  const url = "https://5fc2-125-17-251-66.ngrok-free.app/leave_request"
+  const url = "https://5914-125-17-251-66.ngrok-free.app/leave_request"
   const [users, setUsers] = useState([]);
   const [data, setData] = useState({
     startDate: "",

@@ -6,7 +6,7 @@ import Axios from 'axios';
 function Login() {
 
     const navigate = useNavigate();
-    const url = "https://ec7a-125-17-251-66.ngrok-free.app/login"
+    const url = "https://5914-125-17-251-66.ngrok-free.app/login"
     const token=localStorage.getItem('token')
     console.log(token)
     
