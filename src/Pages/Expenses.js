@@ -16,8 +16,8 @@ function Expenses() {
   }
 
   const navigate = useNavigate();
-  const url = "https://5914-125-17-251-66.ngrok-free.app/expense_by_id  "
-  const baseUrl = "https://5914-125-17-251-66.ngrok-free.app/total_expense";
+  const url = "https://5914-125-17-251-66.ngrok-free.app/leave_request"
+  const baseUrl = "https://5914-125-17-251-66.ngrok-free.app/total_leaves";
   const [users, setUsers] = useState([]);
   const [data, setData] = useState({
     start_date: "",
@@ -60,7 +60,7 @@ function Expenses() {
 
     }, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Basic ${token}`,
       },
     })
       .then(response => {
@@ -74,13 +74,27 @@ function Expenses() {
       });
   }
 
-  useEffect(() => {
-    Axios.get(baseUrl)
-      .then((response) => { 
-        setUsers(response.data.users);
+    useEffect (() => {
+    const token = localStorage.getItem("token");
+    const config={
+      headers: {
+        'Authorization': `Bearer ${token}`, },
+      responseType: "json",
+      "Content-Type": 'application/json',
+      withCredentials: true,
+        };
+    // console.log(`Bearer ${token}`); // Log the Bearer token value to the console
+  
+    Axios.get(baseUrl, config)
+      .then((response) => {
+        setUsers(response.data);
+        console.log(response.data);
       })
       .catch((error) => console.error(error));
-  }, []);
+  },[]);
+  
+
+  
 
 
 
@@ -96,6 +110,7 @@ function Expenses() {
         <div className="col-12">
           <div style={{ padding: "15px" }} >
             <button type="button" className="btn btn-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Expense Request</button>
+            {/* <button type="button" className="btn btn-primary float-left" onClick={handleTable}  >Refresh table</button> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ padding: "80px" }}>
               <div className="modal-dialog" role="document">
                 <div className="modal-content">
@@ -170,21 +185,21 @@ function Expenses() {
                   <th scope="col">Start Date</th>
                   <th scope="col">End Date</th>
                   <th scope="col">Description</th>
+                  <th scope="col">Amount</th>
                   <th scope="col">Status</th>
                   <th scope="col">Approved/Rejected By</th>
-                  <th scope="col">Comments</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map(user => (
+                {users && users.map(user => (
                   <tr key={user.id}>
-                    <td>{user.description}</td>
                     <td>{user.id}</td>
-                    <td>{user.approved_by_rejected_by}</td>
-                    <td>{user.end_date}</td>
-                    <td><button className="btn btn-warning">{user.status}</button></td> 
                     <td>{user.start_date}</td>
-                    <td>{user.comments}</td>
+                    <td>{user.end_date}</td>
+                    <td>{user.description}</td>
+                    <td>{user.amount}</td>
+                    <td><button className="btn btn-warning">{user.status}</button></td> 
+                    <td>{user.approved_by_rejected_by}</td>
                    
                   </tr>
                 ))}

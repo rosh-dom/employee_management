@@ -59,7 +59,7 @@ function Leaves() {
 
     }, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     })
       .then(response => {
@@ -75,9 +75,21 @@ function Leaves() {
   
 
   useEffect(() => {
-    Axios.get(baseUrl)
+    const token=localStorage.getItem("token")
+    const config={
+      headers: {
+      'Authorization': `Bearer ${token}`,},
+      responseType: "json",
+      "Content-Type": `application/json`,
+      withCredentials: true,
+    };
+    // console.log(config)
+    Axios.get(baseUrl,config)
       .then((response) => {
-        setUsers(response.data.users);
+        setUsers(response.data);
+        console.log(response.data)
+        // console.log(response.headers)
+
       })
       .catch((error) => console.error(error));
   }, []);
@@ -174,15 +186,15 @@ function Leaves() {
                   </tr>
                 </thead>
                 <tbody>
-            {users.map((user) => (
+            {users && users.map((user) => (
               <tr key={user.id}>
+                <td>{user.id}</td>
                 <td>{user.start_date}</td>
                 <td>{user.end_date}</td>
-                <td><button className="btn btn-warning">{user.status}</button></td>
-                <td>{user.comments}</td>
-                <td>{user.id}</td>
                 <td>{user.description}</td>
+                <td>{user.status}</td>
                 <td>{user.approved_by_rejected_by}</td>
+                <td>{user.comments}</td>
                 
               </tr>
             ))}
