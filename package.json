@@ -2,7 +2,7 @@
   "name": "navigation-bar",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://ec7a-125-17-251-66.ngrok-free.app/login",
+  "proxy": "https://5fc2-125-17-251-66.ngrok-free.app/login",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
