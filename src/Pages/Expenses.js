@@ -1,29 +1,29 @@
 import React from 'react';
 // import { Outlet } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
-import ExpenseModal from './Modal';
+// import ExpenseModal from './Modal';
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { message } from 'antd';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 
 function Expenses() {
-  function handleClick() {
-    alert('Successful')
+  // function handleClick() {
+  //   alert('Successful')
 
-  }
+  // }
 
   const navigate = useNavigate();
-  const url = "https://5914-125-17-251-66.ngrok-free.app/leave_request"
-  const baseUrl = "https://5914-125-17-251-66.ngrok-free.app/total_leaves";
+  const url = "https://44a7-125-17-251-66.ngrok-free.app/expense_request"
+  const baseUrl = "https://44a7-125-17-251-66.ngrok-free.app/total_expenses";
   const [users, setUsers] = useState([]);
-  const [data, setData] = useState({
-    start_date: "",
-    end_date: "",
-    description: ""
-  })
+  // const [data, setData] = useState({
+    // start_date: "",
+    // end_date: "",
+    // description: ""
+  // })
   const [fromDate, setFromDate] = useState("");
 
   const [toDate, setToDate] = useState("");
@@ -53,20 +53,24 @@ function Expenses() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+    const config={
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+       "accept":"json",
+      "ContentType": `application/json`,
+     
+    };
     Axios.post(url, {
       start_date: fromDate,
       end_date: toDate,
       description: description,
-
-    }, {
-      headers: {
-        Authorization: `Basic ${token}`,
-      },
-    })
+    
+    },config)
       .then(response => {
         console.log(response.data);
         message.success('Expense Request Successful');
-        navigate("/expenses");
+        navigate("/nav");
       })
       .catch(error => {
         console.log(error);
@@ -78,7 +82,7 @@ function Expenses() {
     const token = localStorage.getItem("token");
     const config={
       headers: {
-        'Authorization': `Bearer ${token}`, },
+        Authorization: `Bearer ${token}`,},
       responseType: "json",
       "Content-Type": 'application/json',
       withCredentials: true,
@@ -93,10 +97,6 @@ function Expenses() {
       .catch((error) => console.error(error));
   },[]);
   
-
-  
-
-
 
 
   return (
@@ -197,9 +197,9 @@ function Expenses() {
                     <td>{user.start_date}</td>
                     <td>{user.end_date}</td>
                     <td>{user.description}</td>
-                    <td>{user.amount}</td>
-                    <td><button className="btn btn-warning">{user.status}</button></td> 
-                    <td>{user.approved_by_rejected_by}</td>
+                    <td>{user.Amount}</td>
+                    <td><button className="btn btn-warning">{user.Status}</button></td> 
+                    <td>{user.Approve_Rejected_By}</td>
                    
                   </tr>
                 ))}

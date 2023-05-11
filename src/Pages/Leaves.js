@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { message } from 'antd';
 import { Link } from "react-router-dom";
-const baseUrl = "https://5914-125-17-251-66.ngrok-free.app/total_leaves";
+const baseUrl = "https://44a7-125-17-251-66.ngrok-free.app/total_leaves";
 
 function Leaves() {
   function handleClick() {
@@ -16,7 +16,7 @@ function Leaves() {
   }
 
   const navigate = useNavigate();
-  const url = "https://5914-125-17-251-66.ngrok-free.app/leave_request"
+  const url = "https://44a7-125-17-251-66.ngrok-free.app/leave_request"
   const [users, setUsers] = useState([]);
   const [data, setData] = useState({
     startDate: "",
@@ -52,16 +52,21 @@ function Leaves() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    Axios.post(url, {
+    const config={
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+       "accept":"json",
+      "ContentType": `application/json`,
+     
+    };
+    Axios.post(url,  {
       start_date: fromDate,
       end_date: toDate,
       description: description,
 
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
+    },config)
+
       .then(response => {
         console.log(response.data);
         message.success('Leave Request Successful');
