@@ -6,7 +6,7 @@ import Axios from 'axios';
 function Login() {
 
     const navigate = useNavigate();
-    const url = "https://44a7-125-17-251-66.ngrok-free.app/login"
+    const url = "https://ffe7-125-17-251-66.ngrok-free.app/login"
     const token=localStorage.getItem('token')
     console.log(token)
     
@@ -46,7 +46,7 @@ function Login() {
             } else {
                 localStorage.setItem('token', res.data.token)
                 alert(res.data.message);
-                    navigate("/nav")
+                    // navigate("/nav")
                     // Redirect to home page or perform other actions as needed
                 }
 

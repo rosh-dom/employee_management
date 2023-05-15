@@ -6,9 +6,9 @@ import Leaves from '../Pages/Leaves';
 import Login from '../Pages/Login';
 import Navbar from './Navbar';
 import Services from '../Pages/Services';
-import Home from '../Pages/Home';
+// import Home from '../Pages/Home';
 import Protected from '../Pages/Protected';
-import ExpenseModal from '../Pages/Modal';
+// import ExpenseModal from '../Pages/Modal';
 
 
 function Routesf(){
@@ -57,7 +57,7 @@ function Routesf(){
             }
           />
 
-        <Route exact path='/ex-req' element={<ExpenseModal />} />
+        {/* <Route exact path='/ex-req' element={<ExpenseModal />} /> */}
         <Route exact path='*' element={<Navbar />} />
       </Routes>
     </BrowserRouter>

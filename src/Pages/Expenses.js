@@ -1,12 +1,10 @@
 import React from 'react';
-// import { Outlet } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
-// import ExpenseModal from './Modal';
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { message } from 'antd';
-// import { Link } from "react-router-dom";
+// import axios from 'axios';
 
 
 function Expenses() {
@@ -16,19 +14,33 @@ function Expenses() {
   // }
 
   const navigate = useNavigate();
-  const url = "https://44a7-125-17-251-66.ngrok-free.app/expense_request"
-  const baseUrl = "https://44a7-125-17-251-66.ngrok-free.app/total_expenses";
+  const url = "https://ffe7-125-17-251-66.ngrok-free.app/expense_request"
+  const baseUrl = "https://ffe7-125-17-251-66.ngrok-free.app/total_expenses";
+  const updateUrl = "https://ffe7-125-17-251-66.ngrok-free.app/update_expense_status";
   const [users, setUsers] = useState([]);
   // const [data, setData] = useState({
-    // start_date: "",
-    // end_date: "",
-    // description: ""
+  // start_date: "",
+  // end_date: "",
+  // description: ""
   // })
   const [fromDate, setFromDate] = useState("");
 
   const [toDate, setToDate] = useState("");
 
   const [description, setDescription] = useState("");
+
+  // const [expenses,setLeaves]=useState("");
+  const token = localStorage.getItem("token");
+  // const config={
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  //   responseType:"json",
+  //   "ContentType": `application/json`,
+  //   withCredentials: true,
+
+  // };
+
 
   const assignFromDate = e => {
     const newValueFromDate = e.target.value;
@@ -50,23 +62,76 @@ function Expenses() {
     setDescription(newValueDesc);
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    const config={
+  const handleAccept = (id) => {
+    const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-       "accept":"json",
+      "accept": "json",
       "ContentType": `application/json`,
-     
+
+    };
+    Axios.post(updateUrl, { id: id, status: "approved" }, config)
+      .then((response) => {
+        console.log(response.data);
+        const updatedUsers = users.map((user) => {
+          if (user.id === id) {
+            return { ...user, status: "approved" };
+          } else {
+            return user;
+          }
+        });
+        setUsers(updatedUsers);
+      })
+      .catch((error) => console.error(error));
+
+
+  }
+
+
+  const handleReject = (id) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      "accept": "json",
+      "ContentType": `application/json`,
+
+    };
+    Axios.post(updateUrl, { id: id, status: "rejected" }, config)
+      .then((response) => {
+        console.log(response.data);
+        const updatedUsers = users.map((user) => {
+          if (user.id === id) {
+            return { ...user, status: "rejected" };
+          } else {
+            return user;
+          }
+        });
+        setUsers(updatedUsers);
+      })
+      .catch((error) => console.error(error));
+
+
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      "accept": "json",
+      "ContentType": `application/json`,
+
     };
     Axios.post(url, {
       start_date: fromDate,
       end_date: toDate,
       description: description,
-    
-    },config)
+
+    }, config)
       .then(response => {
         console.log(response.data);
         message.success('Expense Request Successful');
@@ -78,25 +143,26 @@ function Expenses() {
       });
   }
 
-    useEffect (() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
-    const config={
+    const config = {
       headers: {
-        Authorization: `Bearer ${token}`,},
+        Authorization: `Bearer ${token}`,
+      },
       responseType: "json",
       "Content-Type": 'application/json',
       withCredentials: true,
-        };
+    };
     // console.log(`Bearer ${token}`); // Log the Bearer token value to the console
-  
+
     Axios.get(baseUrl, config)
       .then((response) => {
         setUsers(response.data);
         console.log(response.data);
       })
       .catch((error) => console.error(error));
-  },[]);
-  
+  }, []);
+
 
 
   return (
@@ -109,7 +175,7 @@ function Expenses() {
 
         <div className="col-12">
           <div style={{ padding: "15px" }} >
-            <button type="button" className="btn btn-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Expense Request</button>
+            <button type="button" className="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Expense Request</button>
             {/* <button type="button" className="btn btn-primary float-left" onClick={handleTable}  >Refresh table</button> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ padding: "80px" }}>
               <div className="modal-dialog" role="document">
@@ -186,8 +252,10 @@ function Expenses() {
                   <th scope="col">End Date</th>
                   <th scope="col">Description</th>
                   <th scope="col">Amount</th>
-                  <th scope="col">Status</th>
+                  <th scope="col">status</th>
+                  <th scope="col">Validate request</th>
                   <th scope="col">Approved/Rejected By</th>
+
                 </tr>
               </thead>
               <tbody>
@@ -197,10 +265,38 @@ function Expenses() {
                     <td>{user.start_date}</td>
                     <td>{user.end_date}</td>
                     <td>{user.description}</td>
-                    <td>{user.Amount}</td>
-                    <td><button className="btn btn-warning">{user.Status}</button></td> 
-                    <td>{user.Approve_Rejected_By}</td>
-                   
+                    <td>{user.amount}</td>
+                    <td>
+                      {user.status === "pending" ? (
+                        <button className="btn btn-warning btn-sm">
+                          {user.status}
+                        </button>
+                      ) : user.status === "approved" ? (
+                        <button className="btn btn-success btn-sm">
+                          {user.status}
+                        </button>
+                      ) : (
+                        <button className="btn btn-outline-danger btn-sm">
+                          {user.status}
+                        </button>
+                      )}
+                    </td>
+                    <td  className="btn-group" role="group" aria-label="Basic example">
+                      <button
+                        className="btn btn-outline-success btn-sm"
+                        onClick={() => handleAccept(user.id)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => handleReject(user.id)}
+                      >
+                        Reject
+                      </button>
+                    </td>
+                    <td>{user.approved_by_rejected_by}</td>
+
                   </tr>
                 ))}
 
