@@ -58,7 +58,7 @@ function Navbar() {
                                     <img src="https://static.vecteezy.com/system/resources/previews/006/086/198/original/notification-icon-for-web-vector.jpg" alt="" width="30" height="24" />
                                     <form className="form-inline my-2 my-lg-0">
                                         <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
-                                        <div className="btn-group dropleft">
+                                        <div className="btn-group dropdown">
                                             <a className="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                                             </a>

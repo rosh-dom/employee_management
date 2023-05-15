@@ -14,15 +14,16 @@ function Expenses() {
   // }
 
   const navigate = useNavigate();
-  const url = "https://ffe7-125-17-251-66.ngrok-free.app/leave_request"
-  const baseUrl = "https://ffe7-125-17-251-66.ngrok-free.app/total_leaves";
-  const updateUrl = "https://ffe7-125-17-251-66.ngrok-free.app/update_leave_status";
+  const url = "https://2b88-125-17-251-66.ngrok-free.app/leave_request"
+  const baseUrl = "https://2b88-125-17-251-66.ngrok-free.app/total_leaves";
+  const updateUrl = "https://2b88-125-17-251-66.ngrok-free.app/update_leave_status";
   const [users, setUsers] = useState([]);
   // const [data, setData] = useState({
   // start_date: "",
   // end_date: "",
   // description: ""
   // })
+  
   const [fromDate, setFromDate] = useState("");
 
   const [toDate, setToDate] = useState("");
@@ -41,6 +42,10 @@ function Expenses() {
 
   // };
 
+  const [data, setData] = useState({
+    comments:""
+})
+
   const assignFromDate = e => {
     const newValueFromDate = e.target.value;
     console.log(`New value of FromDate: ${newValueFromDate}`);
@@ -48,6 +53,21 @@ function Expenses() {
 
 
   };
+
+  function Refresh(){
+    window.location.reload(true);
+  }
+
+
+
+  function handle(e) {
+    const newData = { ...data }
+    newData.comments = e.target.value
+    setData(newData)
+    console.log(newData)
+    
+
+}
 
   const handleToDateChange = (e) => {
     const newValueToDate = e.target.value;
@@ -70,7 +90,9 @@ function Expenses() {
       "ContentType": `application/json`,
 
     };
-    Axios.post(updateUrl, { id: id, status: "approved" }, config)
+    
+    const comments=data.comments;
+    Axios.post(updateUrl, { id: id, status: "approved", comments: comments }, config)
       .then((response) => {
         console.log(response.data);
         const updatedUsers = users.map((user) => {
@@ -81,6 +103,7 @@ function Expenses() {
           }
         });
         setUsers(updatedUsers);
+        Refresh();
       })
       .catch((error) => console.error(error));
 
@@ -97,7 +120,8 @@ function Expenses() {
       "ContentType": `application/json`,
 
     };
-    Axios.post(updateUrl, { id: id, status: "rejected" }, config)
+    const comments= data.comments;
+    Axios.post(updateUrl, { id: id, status: "rejected", comments: comments }, config)
       .then((response) => {
         console.log(response.data);
         const updatedUsers = users.map((user) => {
@@ -108,11 +132,13 @@ function Expenses() {
           }
         });
         setUsers(updatedUsers);
+        Refresh();
       })
       .catch((error) => console.error(error));
 
 
   }
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -174,7 +200,7 @@ function Expenses() {
 
         <div className="col-12">
           <div style={{ padding: "15px" }} >
-            <button type="button" className="btn btn-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Leave Request</button>
+            <button type="button" className="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Leave Request</button>
             {/* <button type="button" className="btn btn-primary float-left" onClick={handleTable}  >Refresh table</button> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ padding: "80px" }}>
               <div className="modal-dialog" role="document">
@@ -189,7 +215,7 @@ function Expenses() {
                     <form onSubmit={handleSubmit} >
                       <div className='form-inline'>
                         <div className="form-group ">
-                          <label for="startDate " className="col-form-label" style={{ padding: "7px", align: 'left' }} ><h6>Start Date</h6></label>
+                          <label htmlFor="startDate " className="col-form-label" style={{ padding: "7px", align: 'left' }} ><h6>Start Date</h6></label>
                           {/* <input type="text" className="form-control" id="recipient-name"/> */}
                           <input
 
@@ -204,7 +230,7 @@ function Expenses() {
                         </div>
                         <div className="form-group ">
 
-                          <label for="endDate" className="col-form-label" style={{ padding: "10px", alignContent: 'right' }}><h6>End Date</h6></label>
+                          <label htmlFor="endDate" className="col-form-label" style={{ padding: "10px", alignContent: 'right' }}><h6>End Date</h6></label>
                           {/* <input type="text" className="form-control" id="recipient-name"/> */}
                           <input
                             type="date"
@@ -221,7 +247,7 @@ function Expenses() {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label for="message-text" className="col-form-label" style={{ padding: "10px" }}><h6>Description</h6></label>
+                        <label htmlFor="message-text" className="col-form-label" style={{ padding: "10px" }}><h6>Description</h6></label>
                         <textarea className="form-control" id="message-text" onChange={handleDescriptionChange}></textarea>
                       </div>
                     </form>
@@ -250,10 +276,11 @@ function Expenses() {
                   <th scope="col">Start Date</th>
                   <th scope="col">End Date</th>
                   <th scope="col">Description</th>
-                  <th scope="col">comments</th>
+                  <th scope="col"> Write comments</th>
+                  <th scope="col"> Comment Display</th>
                   <th scope="col">status</th>
-                  <th scope="col">Validate request</th>
                   <th scope="col">Approved/Rejected By</th>
+                  <th scope="col">Validate request</th>
 
                 </tr>
               </thead>
@@ -264,37 +291,45 @@ function Expenses() {
                     <td>{user.start_date}</td>
                     <td>{user.end_date}</td>
                     <td>{user.description}</td>
-                    <td>{user.comments}</td>
+                    <td ><input onChange={(e)=>handle(e)} id="comments" value={data.comments.id} placeholder='comments' className="input-group-text" type='text'></input> 
+                    {/* <button className="btn-group" role="group" aria-label="Basic example">Save</button> */}
+                   
+                    </td>
+                    <td>
+                    {user.comments}
+                    </td>
+
                     <td className="btn-group" role="group" aria-label="Basic example">
                       {user.status === "pending" ? (
-                        <button className="btn btn-warning btn-sm">
+                        <button className="btn btn-outline-warning btn-sm">
                           {user.status}
                         </button>
                       ) : user.status === "approved" ? (
-                        <button className="btn btn-success btn-sm">
+                        <button className="btn btn-outline-success btn-sm">
                           {user.status}
                         </button>
                       ) : (
-                        <button className="btn btn-danger btn-sm">
+                        <button className="btn btn-outline-danger btn-sm">
                           {user.status}
                         </button>
                       )}
                     </td>
-                    <td>
+                      <td>{user.approved_by_rejected_by}</td>
+                    <td class="btn-group" role="group" aria-label="Basic example">
                       <button
-                        className="btn btn-success btn-sm"
+                        className="btn btn-outline-success btn-sm"
                         onClick={() => handleAccept(user.id)}
                       >
                         Approve
                       </button>
+                      
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-outline-danger btn-sm"
                         onClick={() => handleReject(user.id)}
                       >
                         Reject
                       </button>
                     </td>
-                    <td>{user.approved_by_rejected_by}</td>
 
                   </tr>
                 ))}

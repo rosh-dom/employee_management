@@ -14,9 +14,9 @@ function Expenses() {
   // }
 
   const navigate = useNavigate();
-  const url = "https://ffe7-125-17-251-66.ngrok-free.app/expense_request"
-  const baseUrl = "https://ffe7-125-17-251-66.ngrok-free.app/total_expenses";
-  const updateUrl = "https://ffe7-125-17-251-66.ngrok-free.app/update_expense_status";
+  const url = "https://2b88-125-17-251-66.ngrok-free.app/expense_request"
+  const baseUrl = "https://2b88-125-17-251-66.ngrok-free.app/total_expenses";
+  const updateUrl = "https://2b88-125-17-251-66.ngrok-free.app/update_expense_status";
   const [users, setUsers] = useState([]);
   // const [data, setData] = useState({
   // start_date: "",
@@ -29,6 +29,8 @@ function Expenses() {
 
   const [description, setDescription] = useState("");
 
+  const[amount, setAmount]= useState("");
+
   // const [expenses,setLeaves]=useState("");
   const token = localStorage.getItem("token");
   // const config={
@@ -40,6 +42,10 @@ function Expenses() {
   //   withCredentials: true,
 
   // };
+
+    function Refresh(){
+      window.location.reload(true);
+    }
 
 
   const assignFromDate = e => {
@@ -62,6 +68,12 @@ function Expenses() {
     setDescription(newValueDesc);
   }
 
+  const handleAmountChange = (e) => {
+    const newValueAmount = e.target.value;
+    console.log(newValueAmount);
+    setAmount(newValueAmount);
+  }
+
   const handleAccept = (id) => {
     const config = {
       headers: {
@@ -82,6 +94,7 @@ function Expenses() {
           }
         });
         setUsers(updatedUsers);
+        Refresh();
       })
       .catch((error) => console.error(error));
 
@@ -109,6 +122,7 @@ function Expenses() {
           }
         });
         setUsers(updatedUsers);
+        Refresh();
       })
       .catch((error) => console.error(error));
 
@@ -130,19 +144,23 @@ function Expenses() {
       start_date: fromDate,
       end_date: toDate,
       description: description,
+      amount: amount,
 
     }, config)
       .then(response => {
         console.log(response.data);
         message.success('Expense Request Successful');
-        navigate("/nav");
+        Refresh();
+        
+        
       })
       .catch(error => {
         console.log(error);
         message.error('Expense Request Failed');
       });
-  }
-
+      
+    }
+    
   useEffect(() => {
     const token = localStorage.getItem("token");
     const config = {
@@ -190,7 +208,7 @@ function Expenses() {
                     <form onSubmit={handleSubmit} >
                       <div className='form-inline'>
                         <div className="form-group ">
-                          <label for="startDate " className="col-form-label" style={{ padding: "7px", align: 'left' }} ><h6>Start Date</h6></label>
+                          <label htmlFor="startDate " className="col-form-label" style={{ padding: "7px", align: 'left' }} ><h6>Start Date</h6></label>
                           {/* <input type="text" className="form-control" id="recipient-name"/> */}
                           <input
 
@@ -205,7 +223,7 @@ function Expenses() {
                         </div>
                         <div className="form-group ">
 
-                          <label for="endDate" className="col-form-label" style={{ padding: "10px", alignContent: 'right' }}><h6>End Date</h6></label>
+                          <label htmlFor="endDate" className="col-form-label" style={{ padding: "10px", alignContent: 'right' }}><h6>End Date</h6></label>
                           {/* <input type="text" className="form-control" id="recipient-name"/> */}
                           <input
                             type="date"
@@ -222,14 +240,21 @@ function Expenses() {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label for="message-text" className="col-form-label" style={{ padding: "10px" }}><h6>Description</h6></label>
+                        <label htmlFor="message-text" className="col-form-label" style={{ padding: "10px" }}><h6>Description</h6></label>
                         <textarea className="form-control" id="message-text" onChange={handleDescriptionChange}></textarea>
                       </div>
+
+                      <div className="form-group">
+                        <label htmlFor="message-text" className="col-form-label" style={{ padding: "10px" }}><h6>Amount</h6></label>
+                        <textarea className="form-control" id="message-text" onChange={handleAmountChange}></textarea>
+                      </div>
+
                     </form>
                   </div>
                   <div className="modal-footer">
                     <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" className="btn btn-primary" value={description} onClick={handleSubmit} style={{ backgroundColor: 'black' }}>Request Expense</button>
+
                   </div>
                 </div>
               </div>
