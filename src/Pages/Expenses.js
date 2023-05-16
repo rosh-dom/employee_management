@@ -79,7 +79,15 @@ function Expenses() {
   const handleAmountChange = (e) => {
     const newValueAmount = e.target.value;
     console.log(newValueAmount);
-    setAmount(newValueAmount);
+
+    const numericValueAmount = newValueAmount.replace(/[^0-9.]/g, '');
+
+    if (numericValueAmount !== newValueAmount) {
+      // The input contains non-numeric characters
+      message.error('Please enter a valid numeric amount.');
+      return;
+    } 
+    setAmount(numericValueAmount);
   }
 
   const handleAccept = (id) => {
@@ -139,6 +147,22 @@ function Expenses() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if(!fromDate){
+      message.error('Please enter the start date');
+      return;
+    }
+
+    if(!toDate){
+      message.error('Please enter the end date.');
+      return;
+    }
+
+    if(!amount){
+      message.error('Please enter the amount')
+      return;
+    }
+
     const token = localStorage.getItem("token");
     const config = {
       headers: {
