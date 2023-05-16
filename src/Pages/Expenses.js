@@ -14,9 +14,9 @@ function Expenses() {
   // }
 
   const navigate = useNavigate();
-  const url = "https://2b88-125-17-251-66.ngrok-free.app/expense_request"
-  const baseUrl = "https://2b88-125-17-251-66.ngrok-free.app/total_expenses";
-  const updateUrl = "https://2b88-125-17-251-66.ngrok-free.app/update_expense_status";
+  const url = "https://4818-125-17-251-66.ngrok-free.app/expense_request"
+  const baseUrl = "https://4818-125-17-251-66.ngrok-free.app/total_expenses";
+  const updateUrl = "https://4818-125-17-251-66.ngrok-free.app/update_expense_status";
   const [users, setUsers] = useState([]);
   // const [data, setData] = useState({
   // start_date: "",
@@ -29,7 +29,9 @@ function Expenses() {
 
   const [description, setDescription] = useState("");
 
-  const[amount, setAmount]= useState("");
+  const [amount, setAmount] = useState("");
+
+  const [statusFilter, setStatusFilter] = useState("");
 
   // const [expenses,setLeaves]=useState("");
   const token = localStorage.getItem("token");
@@ -43,9 +45,15 @@ function Expenses() {
 
   // };
 
-    function Refresh(){
-      window.location.reload(true);
-    }
+  function Refresh() {
+    window.location.reload(true);
+  }
+
+  const handleFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+  };
+
+
 
 
   const assignFromDate = e => {
@@ -151,16 +159,16 @@ function Expenses() {
         console.log(response.data);
         message.success('Expense Request Successful');
         Refresh();
-        
-        
+
+
       })
       .catch(error => {
         console.log(error);
         message.error('Expense Request Failed');
       });
-      
-    }
-    
+
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const config = {
@@ -195,6 +203,8 @@ function Expenses() {
           <div style={{ padding: "15px" }} >
             <button type="button" className="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Expense Request</button>
             {/* <button type="button" className="btn btn-primary float-left" onClick={handleTable}  >Refresh table</button> */}
+          
+
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ padding: "80px" }}>
               <div className="modal-dialog" role="document">
                 <div className="modal-content">
@@ -259,6 +269,13 @@ function Expenses() {
                 </div>
               </div>
             </div>
+
+            <select value={statusFilter} onChange={handleFilterChange} style={{position:'absolute', bottom: '-2px', left:'20px'}}>
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
             {/* <Link to="/ex-req" type= "button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"> Expense request </Link> */}
           </div>
 
@@ -284,46 +301,50 @@ function Expenses() {
                 </tr>
               </thead>
               <tbody>
-                {users && users.map(user => (
-                  <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>{user.start_date}</td>
-                    <td>{user.end_date}</td>
-                    <td>{user.description}</td>
-                    <td>{user.amount}</td>
-                    <td>
-                      {user.status === "pending" ? (
-                        <button className="btn btn-warning btn-sm">
-                          {user.status}
-                        </button>
-                      ) : user.status === "approved" ? (
-                        <button className="btn btn-success btn-sm">
-                          {user.status}
-                        </button>
-                      ) : (
-                        <button className="btn btn-outline-danger btn-sm">
-                          {user.status}
-                        </button>
-                      )}
-                    </td>
-                    <td  className="btn-group" role="group" aria-label="Basic example">
-                      <button
-                        className="btn btn-outline-success btn-sm"
-                        onClick={() => handleAccept(user.id)}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        onClick={() => handleReject(user.id)}
-                      >
-                        Reject
-                      </button>
-                    </td>
-                    <td>{user.approved_by_rejected_by}</td>
+                {users && users.filter((user) =>
+                  statusFilter !== "" ? user.status === statusFilter : true
+                )
 
-                  </tr>
-                ))}
+                  .map(user => (
+                    <tr key={user.id}>
+                      <td>{user.id}</td>
+                      <td>{user.start_date}</td>
+                      <td>{user.end_date}</td>
+                      <td>{user.description}</td>
+                      <td>{user.amount}</td>
+                      <td>
+                        {user.status === "pending" ? (
+                          <button className="btn btn-warning btn-sm">
+                            {user.status}
+                          </button>
+                        ) : user.status === "approved" ? (
+                          <button className="btn btn-success btn-sm">
+                            {user.status}
+                          </button>
+                        ) : (
+                          <button className="btn btn-outline-danger btn-sm">
+                            {user.status}
+                          </button>
+                        )}
+                      </td>
+                      <td className="btn-group" role="group" aria-label="Basic example">
+                        <button
+                          className="btn btn-outline-success btn-sm"
+                          onClick={() => handleAccept(user.id)}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => handleReject(user.id)}
+                        >
+                          Reject
+                        </button>
+                      </td>
+                      <td>{user.approved_by_rejected_by}</td>
+
+                    </tr>
+                  ))}
 
                 {/* <tr>
                     <th scope="row">2</th>

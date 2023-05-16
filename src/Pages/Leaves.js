@@ -14,9 +14,9 @@ function Expenses() {
   // }
 
   const navigate = useNavigate();
-  const url = "https://2b88-125-17-251-66.ngrok-free.app/leave_request"
-  const baseUrl = "https://2b88-125-17-251-66.ngrok-free.app/total_leaves";
-  const updateUrl = "https://2b88-125-17-251-66.ngrok-free.app/update_leave_status";
+  const url = "https://4818-125-17-251-66.ngrok-free.app/leave_request"
+  const baseUrl = "https://4818-125-17-251-66.ngrok-free.app/leaves";
+  const updateUrl = "https://4818-125-17-251-66.ngrok-free.app/update_leave_status";
   const [users, setUsers] = useState([]);
   // const [data, setData] = useState({
   // start_date: "",
@@ -29,6 +29,8 @@ function Expenses() {
   const [toDate, setToDate] = useState("");
 
   const [description, setDescription] = useState("");
+
+  const [statusFilter, setStatusFilter]= useState("");
 
   // const [expenses,setLeaves]=useState("");
   const token = localStorage.getItem("token");
@@ -58,7 +60,9 @@ function Expenses() {
     window.location.reload(true);
   }
 
-
+  const handleFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+  };
 
   function handle(e) {
     const newData = { ...data }
@@ -201,6 +205,13 @@ function Expenses() {
         <div className="col-12">
           <div style={{ padding: "15px" }} >
             <button type="button" className="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" >Leave Request</button>
+
+            <select value={statusFilter} onChange={handleFilterChange} style={{position:'absolute', bottom: '-2px', left:'20px'}}>
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
             {/* <button type="button" className="btn btn-primary float-left" onClick={handleTable}  >Refresh table</button> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ padding: "80px" }}>
               <div className="modal-dialog" role="document">
@@ -285,7 +296,12 @@ function Expenses() {
                 </tr>
               </thead>
               <tbody>
-                {users && users.map(user => (
+                {users && users.filter((user) =>
+                 
+                  statusFilter !=="" ? user.status === statusFilter : true
+                 )
+                
+                .map(user => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.start_date}</td>
